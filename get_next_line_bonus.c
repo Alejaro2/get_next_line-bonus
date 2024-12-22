@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: alejaro2 <alejaro2@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/03 18:18:42 by alejaro2          #+#    #+#             */
-/*   Updated: 2024/12/22 21:15:40 by alejaro2         ###   ########.fr       */
+/*   Created: 2024/12/22 19:55:12 by alejaro2          #+#    #+#             */
+/*   Updated: 2024/12/22 21:37:16 by alejaro2         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*updated_accumulated(char *accumulated)
 {
@@ -87,35 +87,41 @@ char	*read_until(int fd, char *accumulated)
 
 char	*get_next_line(int fd)
 {
-	static char	*accumulated;
+	static char	*accumulated[1024];
 	char		*line;
 	char		*temp;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	accumulated = read_until(fd, accumulated);
-	if (!accumulated)
+	accumulated[fd] = read_until(fd, accumulated[fd]);
+	if (!accumulated[fd])
 		return (NULL);
-	line = extract_line(accumulated);
-	temp = updated_accumulated(accumulated);
-	free(accumulated);
-	accumulated = temp;
+	line = extract_line(accumulated[fd]);
+	temp = updated_accumulated(accumulated[fd]);
+	free(accumulated[fd]);
+	accumulated[fd] = temp;
 	return (line);
 }
-// int main ()
-// {
-// 	int fd = open("hola.txt", O_RDONLY); // Abrir el archivo en modo lectura
-// 	if (fd < 0)
-// 	{
-// 		perror("Error al abrir el archivo");
-// 		return (1);
-// 	}
-// 	char *line;
-// 	while ((line = get_next_line(fd)))
-// 	{
-// 		printf("%s", line);
-// 		free(line);
-// 	}
-// 	close(fd);
-// 	return (0);
-// }
+/*int	main(void)
+{
+	int		fd1;
+	int		fd2;
+	char	*line;
+
+	fd1 = open("hola1.txt", O_RDONLY);
+	fd2 = open("hola2.txt", O_RDONLY);
+	while ((line = get_next_line(fd1)) != NULL)
+	{
+		printf("%s", line);
+		free(line);
+	}
+	printf("%c", '\n');
+	while ((line = get_next_line(fd2)) != NULL)
+	{
+		printf("%s", line);
+		free(line);
+	}
+	close(fd1);
+	close(fd2);
+	return (0);
+}*/
